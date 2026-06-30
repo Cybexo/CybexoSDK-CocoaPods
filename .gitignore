@@ -1,0 +1,7 @@
+# ignore temp & macOS junk
+.DS_Store
+xcuserdata/
+.idea/
+
+# Ensure regenerated code‑sign blobs never enter history
+**/_CodeSignature/

@@ -1,0 +1,70 @@
+CYBEXO CMP IOS SDK - COMMERCIAL LICENSE
+Copyright 2026 CYBEXO Inc. All rights reserved.
+
+1. GRANT OF LICENSE
+
+CYBEXO Inc. ("CYBEXO") grants the customer that has an active SaaS
+subscription agreement with CYBEXO ("You") a non-exclusive, non-transferable,
+revocable license to:
+
+- download the CybexoSDK iOS SDK ("Software");
+- integrate the Software into Your own iOS application(s) that are authorized
+  under Your SaaS account; and
+- distribute those applications to end-users.
+
+2. RESTRICTIONS
+
+You shall not:
+
+- redistribute or resell the Software itself, or expose its APIs for use by
+  third-party developers outside Your organization;
+- modify, reverse-engineer, deobfuscate, or attempt to derive source code;
+- remove copyright, trademark, or attribution notices;
+- use the Software without a valid, paid CYBEXO subscription; or
+- violate any applicable privacy, advertising, or data-protection laws or the
+  IAB Transparency and Consent Framework policies.
+
+3. OWNERSHIP
+
+The Software is licensed, not sold. CYBEXO retains all right, title, and
+interest, including all intellectual-property rights.
+
+4. FEES AND TERMINATION
+
+The license is contingent on timely payment of SaaS fees. It terminates
+automatically if the SaaS subscription expires or is cancelled. Upon
+termination You must remove the Software from all applications and cease
+distribution.
+
+5. SUPPORT AND UPDATES
+
+Support, bug fixes, and updates are provided in accordance with Your SaaS
+agreement. CYBEXO may deliver critical fixes without notice.
+
+6. DISCLAIMER OF WARRANTY
+
+THE SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR
+A PARTICULAR PURPOSE, OR NON-INFRINGEMENT.
+
+7. LIMITATION OF LIABILITY
+
+IN NO EVENT SHALL CYBEXO BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL,
+CONSEQUENTIAL, OR PUNITIVE DAMAGES ARISING OUT OF THE USE OR INABILITY TO USE
+THE SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. DIRECT
+LIABILITY IS LIMITED TO THE AMOUNT PAID FOR THE SAAS SUBSCRIPTION DURING THE
+TWELVE (12) MONTHS PRECEDING THE CLAIM.
+
+8. GOVERNING LAW
+
+This license is governed by and construed in accordance with the laws of the
+State of New York and the United States, without regard to conflict-of-law
+principles.
+
+9. CONTACT
+
+CYBEXO Inc.
+10 Times Square, 5th Floor, Suite 6143
+New York, NY 10018, USA
+Email: legal@cybexo.com
+Website: https://www.cybexo.com
