@@ -1,20 +1,31 @@
 # CybexoSDK for iOS
 
-`CybexoSDK` is the CYBEXO iOS consent-management SDK package for CocoaPods and manual XCFramework distribution.
+`CybexoSDK` is CYBEXO's iOS consent-management SDK for native apps that need a CMP runtime, consent banner UI, preference controls, device-storage disclosures, and IAB consent signaling.
 
-## Package
+## Requirements
 
-- Pod name: `CybexoSDK`
-- Vendored framework: `CybexoSDK.xcframework`
-- Swift import: `import CybexoSDK`
-- Minimum iOS target: `13.0`
-- Current version: `1.0.0`
+- iOS 13.0 or later
+- Xcode 15 or later
+- CocoaPods 1.12 or later
 
 ## Installation
 
+Add `CybexoSDK` to your Podfile:
+
 ```ruby
-pod 'CybexoSDK', '~> 1.0'
+target 'YourApp' do
+  use_frameworks!
+  pod 'CybexoSDK', '~> 1.0'
+end
 ```
+
+Then run:
+
+```bash
+pod install
+```
+
+Open the generated `.xcworkspace` file and import the SDK where you initialize your consent flow.
 
 ## Quick Start
 
@@ -25,26 +36,20 @@ CybexoCMP.shared.initialize(settingsId: "YOUR_SETTINGS_ID")
 CybexoCMP.shared.showBanner(force: true)
 ```
 
-Legacy source-compatibility aliases remain available for migration inside the `CybexoSDK` module. They do not mean that an already-linked legacy binary can be swapped without rebuilding against `CybexoSDK`.
+## Runtime Storage
 
-## Runtime Storage Policy
+CYBEXO-owned durable consent keys use the `cybexo_cmp_*` prefix.
 
-CYBEXO-owned durable keys use the `cybexo_cmp_*` prefix.
-
-Standards keys are intentionally unchanged:
+Industry-standard consent keys are intentionally preserved so downstream advertising, analytics, and compliance integrations can continue reading the expected values:
 
 - `IABTCF_TCString`
 - `IABTCF_EnableAdvertiserConsentMode`
 - `IABGPP_*`
 - `IABUSPrivacy_String`
 
-## Validation
+## License
 
-Run from this repository:
-
-```bash
-pod lib lint CybexoSDK.podspec --allow-warnings --skip-tests --verbose
-```
+`CybexoSDK` is commercial software. Use of the SDK is governed by the terms in [LICENSE](LICENSE) and requires an active CYBEXO subscription for production use.
 
 ## Support
 
