@@ -1,0 +1,6 @@
+framework module CybexoSDK {
+  umbrella header "CybexoSDK.h"
+  export *
+
+  module * { export * }
+}
