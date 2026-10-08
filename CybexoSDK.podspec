@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'CybexoSDK'
-  s.version          = '2.0.0'
+  s.version          = '2.0.1'
   s.summary          = 'CYBEXO consent-management SDK for iOS'
   s.description      = <<-DESC
     CybexoSDK provides native consent choices and preference controls for

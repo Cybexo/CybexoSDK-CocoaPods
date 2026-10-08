@@ -2,7 +2,11 @@
 
 `CybexoSDK` provides native consent choices, IAB TCF signals and explicit Google Consent Mode values for a registered CYBEXO iOS App.
 
-This repository distributes CybexoSDK 2.0.0. Source, consumer integration and live app verification remain separate from Google or IAB certification.
+This repository distributes CybexoSDK 2.0.1. Source, consumer integration and live app verification remain separate from Google or IAB certification.
+
+## Changes in 2.0.1
+
+The native screens have updated CYBEXO styling and navigation. Startup presentation survives foreground activation during initialization, and stale screens cannot save against changed disclosures. See [release notes](RELEASE-2.0.1.md).
 
 ## Requirements
 
@@ -13,14 +17,14 @@ This repository distributes CybexoSDK 2.0.0. Source, consumer integration and li
 
 ## Installation
 
-Install version 2.0.0 using the normal CocoaPods source:
+Install version 2.0.1 using the normal CocoaPods source:
 
 ```ruby
 platform :ios, '15.0'
 
 target 'YourApp' do
   use_frameworks!
-  pod 'CybexoSDK', '2.0.0'
+  pod 'CybexoSDK', '2.0.1'
 end
 ```
 
