@@ -2,11 +2,11 @@
 
 `CybexoSDK` provides native consent choices, IAB TCF signals and explicit Google Consent Mode values for a registered CYBEXO iOS App.
 
-This repository distributes CybexoSDK 2.0.1. Source, consumer integration and live app verification remain separate from Google or IAB certification.
+This repository distributes CybexoSDK 2.0.2. Source, consumer integration and live app verification remain separate from Google or IAB certification.
 
-## Changes in 2.0.1
+## Changes in 2.0.2
 
-The native screens have updated CYBEXO styling and navigation. Startup presentation survives foreground activation during initialization, and stale screens cannot save against changed disclosures. See [release notes](RELEASE-2.0.1.md).
+Version 2.0.2 adds an app-owned WebView bridge that shares the native consent state, applies denied Google defaults before page scripts, forwards updates and withdrawal, and opens the same native privacy choices. Existing native APIs and saved-choice formats remain compatible with 2.0.1. See [release notes](RELEASE-2.0.2.md).
 
 ## Requirements
 
@@ -17,14 +17,14 @@ The native screens have updated CYBEXO styling and navigation. Startup presentat
 
 ## Installation
 
-Install version 2.0.1 using the normal CocoaPods source:
+Install version 2.0.2 using the normal CocoaPods source:
 
 ```ruby
 platform :ios, '15.0'
 
 target 'YourApp' do
   use_frameworks!
-  pod 'CybexoSDK', '2.0.1'
+  pod 'CybexoSDK', '2.0.2'
 end
 ```
 
@@ -111,3 +111,34 @@ For rollback, retain the exact prior app package and dependency lockfile. Do not
 Support: ios@cybexo.com · https://www.cybexo.com
 
 Copyright 2026 CYBEXO Inc. All rights reserved.
+
+## App-owned embedded WebViews
+
+Version 2.0.2 adds `CybexoWebViewBridge`. Attach it before the first load, retain it with the view, and call `close()` when the view is finished. Use a dedicated `WKUserContentController` and exact HTTPS origins whose content and scripts you control.
+
+```swift
+let webView = WKWebView(frame: .zero)
+let bridge = try CybexoWebViewBridge(
+    webView: webView, settingsId: "YOUR_CYB_APP_ID",
+    ownedHTTPSOrigins: ["https://app.example.com"])
+webView.load(URLRequest(url: URL(string: "https://app.example.com/embedded")!))
+// Retain bridge for this view's lifetime; later call bridge.close().
+```
+
+The bridge sets all four Google defaults to denied at document start, then updates them from the app's validated consent. It stays denied while native configuration or a current decision is unavailable. It shares only this app's choice with its own main-frame content; it does not grant consent to unrelated websites, other apps or child frames. Origin paths, wildcards and HTTP origins are rejected.
+
+In the embedded page, `await window.cybexoNativeConsent.ready` returns the first native snapshot (which may still be loading). Use `getSnapshot()` for a fresh snapshot and listen for `cybexoConsentChanged` for subsequent changes. Require `ready`, `decisionMade` and the relevant granted value before starting optional processing. The page can call `showPreferences()` to reopen the same native privacy controls; it cannot directly change native consent through JavaScript.
+
+```javascript
+function applyConsent(state) {
+  const analyticsAllowed = state.ready && state.decisionMade &&
+    state.google.analytics_storage === 'granted';
+  // Enable or disable your own optional processing using this state.
+}
+window.addEventListener('cybexoConsentChanged', e => applyConsent(e.detail));
+window.cybexoNativeConsent.ready.then(applyConsent);
+document.querySelector('#privacy-choices').onclick = () =>
+  window.cybexoNativeConsent.showPreferences();
+```
+
+Use only one Google consent owner in the view. Do not install a second web CMP or override its defaults. Google tags, if present, use the bridge's normal `dataLayer` consent commands; other embedded integrations should consume the snapshot. `tcString` is the native app's current TCF string, not a separate website decision or a replacement for a website's `__tcfapi`. Embedded content must have the same disclosed purposes and partners as the app. Host apps remain responsible for restricting navigation and gating non-Google processing.

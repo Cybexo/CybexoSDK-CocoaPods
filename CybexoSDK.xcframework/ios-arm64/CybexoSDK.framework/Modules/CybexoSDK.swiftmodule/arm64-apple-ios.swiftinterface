@@ -12,6 +12,7 @@ import ObjectiveC
 import SafariServices
 import Swift
 import UIKit
+import WebKit
 import _Concurrency
 import _StringProcessing
 import _SwiftConcurrencyShims
@@ -365,6 +366,19 @@ public enum ConsentAction : Swift::Equatable {
   case customize(purposes: [Swift::Int], vendors: [Swift::Int])
   public static func == (lhs: CybexoSDK::ConsentAction, rhs: CybexoSDK::ConsentAction) -> Swift::Bool
 }
+@objc @_hasMissingDesignatedInitializers @_Concurrency::MainActor final public class CybexoWebViewBridge : ObjectiveC::NSObject {
+  public enum BridgeError : Swift::Error {
+    case invalidAppID, invalidOrigin, alreadyAttached, alreadyLoaded
+    public static func == (a: CybexoSDK::CybexoWebViewBridge.CybexoSDK::BridgeError, b: CybexoSDK::CybexoWebViewBridge.CybexoSDK::BridgeError) -> Swift::Bool
+    public func hash(into hasher: inout Swift::Hasher)
+    public var hashValue: Swift::Int {
+      get
+    }
+  }
+  @objc(initWithWebView:settingsId:ownedHTTPSOrigins:error:) @_Concurrency::MainActor convenience public init(webView: WebKit::WKWebView, settingsId: Swift::String, ownedHTTPSOrigins: Swift::Set<Swift::String>) throws
+  @objc @_Concurrency::MainActor final public func close()
+  @objc deinit
+}
 @_hasMissingDesignatedInitializers public class CybexoCMP {
   public static let shared: CybexoSDK::CybexoCMP
   public static let consentDidChangeNotification: Foundation::Notification.Foundation::Name
@@ -439,3 +453,6 @@ extension CybexoSDK::CybexoThemePresetId : Swift::RawRepresentable {}
 extension CybexoSDK::CybexoLogLevel : Swift::Equatable {}
 extension CybexoSDK::CybexoLogLevel : Swift::Hashable {}
 extension CybexoSDK::CybexoLogLevel : Swift::RawRepresentable {}
+extension CybexoSDK::CybexoWebViewBridge : Swift::Sendable {}
+extension CybexoSDK::CybexoWebViewBridge.CybexoSDK::BridgeError : Swift::Equatable {}
+extension CybexoSDK::CybexoWebViewBridge.CybexoSDK::BridgeError : Swift::Hashable {}
