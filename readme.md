@@ -2,9 +2,13 @@
 
 `CybexoSDK` provides native consent choices, IAB TCF signals and explicit Google Consent Mode values for a registered CYBEXO iOS App.
 
-This repository distributes CybexoSDK 2.0.2. Source, consumer integration and live app verification remain separate from Google or IAB certification.
+This repository distributes CybexoSDK 2.0.3. Source, consumer integration and live app verification remain separate from Google or IAB certification.
 
-## Changes in 2.0.2
+## Changes in 2.0.3
+
+The existing Google TCF opt-in now honors true/false and persists independently of visitor choices. Direct four-value delivery stays the default; Google-only mode keeps the TCF integration flag off. See [release notes](RELEASE-2.0.3.md).
+
+## Previous changes in 2.0.2
 
 Version 2.0.2 adds an app-owned WebView bridge that shares the native consent state, applies denied Google defaults before page scripts, forwards updates and withdrawal, and opens the same native privacy choices. Existing native APIs and saved-choice formats remain compatible with 2.0.1. See [release notes](RELEASE-2.0.2.md).
 
@@ -17,14 +21,14 @@ Version 2.0.2 adds an app-owned WebView bridge that shares the native consent st
 
 ## Installation
 
-Install version 2.0.2 using the normal CocoaPods source:
+Install version 2.0.3 using the normal CocoaPods source:
 
 ```ruby
 platform :ios, '15.0'
 
 target 'YourApp' do
   use_frameworks!
-  pod 'CybexoSDK', '2.0.2'
+  pod 'CybexoSDK', '2.0.3'
 end
 ```
 
@@ -69,7 +73,7 @@ CybexoCMP.shared.initialize(settingsId: "YOUR_PUBLISHED_CYB_APP_ID")
 
 Replace the placeholder with the real `CYB-` App ID. Loading, invalid configuration and an absent or invalid saved choice remain denied. Read `CybexoCMP.shared.getConsentSnapshot()` on the main thread for current state; a completion callback by itself is not a consent grant. Observe `CybexoCMP.consentDidChangeNotification` for consent routing, successful Firebase application and receipt-status changes, then read the snapshot again. Attribution discovery retries can update diagnostics without that notification; inspect their delivery state again after explicit retry or later host setup. Require `initializationStatus == "READY"`, `decisionMade == true` and the relevant effective signal before permitting optional work.
 
-For Firebase, defer its initial configuration until the CMP has a validated current choice that allows analytics. Keep collection disabled, apply the snapshot's current four effective flags, call `FirebaseApp.configure()` once through the host's normal setup, then call `CybexoCMP.shared.retryRecipientConsent()` and read the snapshot again. Enable Analytics collection only while all four conditions hold: `initializationStatus == "READY"`, `decisionMade == true`, `google.analytics_storage == "granted"`, and `firebaseDelivery == "APPLIED"`. Reevaluate that gate on every CMP notification and disable collection when it closes. Avoid a retry loop inside the observer; retry when recipient setup changes. Keep optional session starts, event calls and advertising requests behind their relevant current consent gates. See Google's [app consent setup](https://developers.google.com/tag-platform/security/guides/app-consent?platform=ios).
+Configure Firebase normally after applying the fixed startup denial, with optional collection disabled. CYBEXO detects Firebase and applies changing consent automatically; do not add a customer snapshot-to-Firebase value relay. Observe CMP notifications to control collection only: enable it while `initializationStatus == "READY"`, `decisionMade == true`, `google.analytics_storage == "granted"` and `firebaseDelivery == "APPLIED"`; disable it when any gate closes. If Firebase becomes available later, call `retryRecipientConsent()` once after configuration. Keep optional events, sessions and advertising behind their corresponding current consent gates. See Google's [app consent setup](https://developers.google.com/tag-platform/security/guides/app-consent?platform=ios).
 
 After normal host setup makes another previously unavailable recipient ready, call `CybexoCMP.shared.retryRecipientConsent()` to apply the latest effective choice. The host remains responsible for each provider's initialization, credentials, collection lifecycle and any App Tracking Transparency requirement. The CMP does not display an ATT prompt or perform provider account setup. A provider may change or resume its SDK behavior when its consent API is called, so follow that provider’s setup and session order.
 
@@ -85,7 +89,11 @@ Opening and closing choices does not itself create a new decision. `refreshConse
 
 The Dashboard's native consent framework is explicit: `tcf` uses the applicable TCF purpose/vendor interface; `google-consent-mode` offers independent Google choices and emits no TC string. Neither setting changes the visitor's actual jurisdiction. The Google delivery setting is separate from the framework.
 
-The SDK forwards the four effective Google values explicitly and sets `IABTCF_EnableAdvertiserConsentMode` to zero so automatic TCF inference does not replace the independently recorded analytics choice. Native `IABTCF_*` preferences remain available to integrations that read them. This 2.0 audit does not qualify separate legacy US/GPP behavior.
+The SDK forwards all four effective Google values explicitly. The default `IABTCF_EnableAdvertiserConsentMode` flag is `0`. In 2.0.3, a host may call `CybexoCMP.shared.setTCFAdvertiserConsentMode(enabled: true)` on the main thread before initialization to opt into Google's TCF advertising integration. Set the host's `GOOGLE_ANALYTICS_TCF_DATA_ENABLED` to true (or omit it) for Firebase to read TCF; retain restrictive startup defaults and collection gates. Calling the API cannot override an Info.plist that disables Google's TCF reader.
+
+The requested option persists for this host installation separately from visitor choices; false opts out. Passive snapshot fields `tcfAdvertiserConsentModeRequested` and `tcfAdvertiserConsentModeEnabled` expose intent and effective eligibility. Flag1 requires a current valid CYBEXO TCF decision, Google delivery enabled and GDPR applicable. It stays `0` without a decision, while loading, in Google-only mode, outside GDPR, after reset and when Google delivery is disabled. Another CMP's standard IAB preferences are preserved. A rejected TC string may legitimately have flag `1`: it enables interpretation of the rejection and grants nothing.
+
+Direct updates continue, preserving the independent Analytics choice and Google vendor veto. Changing the option creates no visitor decision or consent receipt. Flag1 alone is not proof of inference or remote reception; verify actual recipient behavior for your Firebase version/configuration. Legacy US/GPP behavior remains outside this patch's qualification scope.
 
 Optional consent bridges target AppsFlyer 6.17.7, Adjust 5.8.0 and Branch 3.14.2. Keep Objective-C provider classes in statically linked apps using the provider's prescribed linker setup; the reviewed consumer uses `-ObjC`. AppsFlyer receives explicit `AppsFlyerConsent` values with its automatic TCF collection disabled. Branch requires a real configured Branch key. Apply the CMP's effective state before starting optional collection, and retry recipient consent after late host setup. Ordinary refusal does not invoke account erasure or logout.
 
